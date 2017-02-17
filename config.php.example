@@ -1,0 +1,14 @@
+<?php
+
+$config = [
+    "db" => [
+        "host" => "localhost",
+        "name" => "dbuser",
+        "pass" => "hackme",
+        "db" => "upload"
+    ],
+    "app" => [
+        "targetPath" => "/opt/dummy",
+        "uploadHost" => "http://localhost/"
+    ]
+];

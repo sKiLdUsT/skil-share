@@ -1,0 +1,41 @@
+@charset "UTF-8";
+
+body {
+    height: 100vh;
+    width: 100vw;
+}
+
+main {
+    height: calc(100% - 56px);
+    width: 100%;
+}
+
+.valign-wrapper {
+    height: 100%;
+    width: 100%;
+    -webkit-justify-content: center;
+    justify-content: center
+}
+
+@media only screen and (min-width: 601px) {
+    main {
+        height: calc(100% - 64px);
+    }
+}
+
+.valign {
+    vertical-align: middle;
+    max-height: 90%;
+}
+
+.materialboxed {
+    display: unset!important;
+}
+
+.materialboxed:hover:not(.active) {
+    opacity: 1!important;
+}
+
+img.responsive-img:not(.active) {
+    max-height: 50vh;
+}
