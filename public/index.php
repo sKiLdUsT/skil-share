@@ -159,56 +159,60 @@ try{
             $fileSize = filesize($filePath);
             $user = $mysqli->query("SELECT user FROM users WHERE id = '".$data["uid"]."'")->fetch_assoc()["user"];
 
-            if(isset($_GET["raw"])){
-                $file = fopen($filePath, "r");
-                $length = $fileSize;
-                $start = 0;
-                $end = $fileSize - 1;
-                header("Content-Type: $mimeType");
-                header('Cache-Control: publio, must-revalidate');
-                header("Accept-Ranges: 0-" . $length);
-                if(preg_match("/(image|video|audio)\//", $mimeType)){
-                    header('Content-Disposition: inline; filename="'.basename($data['oldName']).'"');
-                }else{
-                    header('Content-Disposition: attachment; filename="'.basename($data['oldName']).'"');
-                }
-                if (isset($_SERVER['HTTP_RANGE'])) {
-                    $c_start = $start;
-                    $c_end = $end;
-                    list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-                    if (strpos($range, ',') !== false) {
-                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes $start-$end/$fileSize");
-                        exit;
+            if(file_exists($filePath)){
+                if(isset($_GET["raw"])){
+                    $file = fopen($filePath, "r");
+                    $length = $fileSize;
+                    $start = 0;
+                    $end = $fileSize - 1;
+                    header("Content-Type: $mimeType");
+                    header('Cache-Control: publio, must-revalidate');
+                    header("Accept-Ranges: 0-" . $length);
+                    if(preg_match("/(image|video|audio)\//", $mimeType)){
+                        header('Content-Disposition: inline; filename="'.basename($data['oldName']).'"');
+                    }else{
+                        header('Content-Disposition: attachment; filename="'.basename($data['oldName']).'"');
                     }
-                    if ($range == '-') {
-                        $c_start = $fileSize - substr($range, 1);
-                    } else {
-                        $range = explode('-', $range);
-                        $c_start = $range[0];
-                        $c_end = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $fileSize;
+                    if (isset($_SERVER['HTTP_RANGE'])) {
+                        $c_start = $start;
+                        $c_end = $end;
+                        list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+                        if (strpos($range, ',') !== false) {
+                            header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                            header("Content-Range: bytes $start-$end/$fileSize");
+                            exit;
+                        }
+                        if ($range == '-') {
+                            $c_start = $fileSize - substr($range, 1);
+                        } else {
+                            $range = explode('-', $range);
+                            $c_start = $range[0];
+                            $c_end = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $fileSize;
+                        }
+                        $c_end = ($c_end > $end) ? $end : $c_end;
+                        if ($c_start > $c_end || $c_start > $fileSize - 1 || $c_end >= $fileSize) {
+                            header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                            header("Content-Range: bytes $start-$end/$fileSize");
+                            exit;
+                        }
+                        $start = $c_start;
+                        $end = $c_end;
+                        $length = $end - $start + 1;
+                        fseek($file, $start);
+                        header('HTTP/1.1 206 Partial Content');
                     }
-                    $c_end = ($c_end > $end) ? $end : $c_end;
-                    if ($c_start > $c_end || $c_start > $fileSize - 1 || $c_end >= $fileSize) {
-                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes $start-$end/$fileSize");
-                        exit;
+                    header("Content-Range: bytes $start-$end/$fileSize");
+                    header("Content-Length: " . $length);
+                    while (@ ob_end_flush()) ;
+                    while (!feof($file)) {
+                        print fread($file, 4096);
+                        @ flush();
                     }
-                    $start = $c_start;
-                    $end = $c_end;
-                    $length = $end - $start + 1;
-                    fseek($file, $start);
-                    header('HTTP/1.1 206 Partial Content');
-                }
-                header("Content-Range: bytes $start-$end/$fileSize");
-                header("Content-Length: " . $length);
-                while (@ ob_end_flush()) ;
-                while (!feof($file)) {
-                    print fread($file, 4096);
-                    @ flush();
+                } else {
+                    include($baseDir . 'templates/media.php');
                 }
             } else {
-                include($baseDir . 'templates/media.php');
+                include($baseDir. 'templates/404.php');
             }
             break;
     }
