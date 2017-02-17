@@ -36,6 +36,6 @@ main {
     opacity: 1!important;
 }
 
-img.responsive-img:not(.active) {
+img.responsive-img:not(.active), video {
     max-height: 50vh;
 }
