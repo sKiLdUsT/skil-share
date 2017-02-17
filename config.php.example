@@ -4,7 +4,7 @@ $config = [
     "db" => [
         "host" => "localhost",
         "name" => "dbuser",
-        "pass" => "hackme",
+        "password" => "hackme",
         "db" => "upload"
     ],
     "app" => [
