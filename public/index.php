@@ -157,7 +157,8 @@ try{
             $filePath = $config["app"]["targetPath"] . $data["name"];
             $mimeType = mime_content_type($filePath);
             $fileSize = filesize($filePath);
-            $user = $mysqli->query("SELECT user FROM users WHERE id = '".$data["uid"]."'")->fetch_assoc()["user"];
+            $user = $mysqli->query("SELECT user FROM users WHERE id = '".$_SESSION["uid"]."'")->fetch_assoc()["user"];
+            $uUser = $mysqli->query("SELECT user FROM users WHERE id = '".$data["uid"]."'")->fetch_assoc()["user"];
 
             if(file_exists($filePath)){
                 if(isset($_GET["raw"])){

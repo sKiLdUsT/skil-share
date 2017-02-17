@@ -48,7 +48,7 @@
                             <b>Type: </b><?php echo $mimeType; ?>
                         </div>
                         <div class="col s3">
-                            <b>Uploader: </b><?php echo $user; ?>
+                            <b>Uploader: </b><?php echo $uUser; ?>
                         </div>
                     </div>
                 </div>
