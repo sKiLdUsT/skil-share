@@ -42,22 +42,22 @@ while($file = $files->fetch_assoc())
         switch(true)
         {
             case preg_match('/image\/.+/', $mime):
-                $file->type = 1;
+                $newFile->type = 1;
                 break;
             case preg_match('/video\/.+/', $mime):
-                $file->type = 2;
+                $newFile->type = 2;
                 break;
             case preg_match('/audio\/.+/', $mime):
-                $file->type = 3;
+                $newFile->type = 3;
                 break;
             case preg_match('/text\/.+/', $mime):
-                $file->type = 4;
+                $newFile->type = 4;
                 break;
             case preg_match('/application\/pdf/', $mime):
-                $file->type = 5;
+                $newFile->type = 5;
                 break;
             default:
-                $file->type = 0;
+                $newFile->type = 0;
                 break;
         }
         if ($moveFiles) {
