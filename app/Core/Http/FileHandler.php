@@ -37,11 +37,27 @@ class FileHandler extends Handler
             return;
         }
         $uploadFile = (object) $_FILES['file'];
-        if($uploadFile->size > 104857600)
+        switch($uploadFile->error)
         {
-            http_response_code(400);
-            (new SiteHandler())->upload($request, 'File too big! (Must not be greater than 100MB)');
-            return;
+            case UPLOAD_ERR_OK:
+                break;
+            case UPLOAD_ERR_INI_SIZE:
+            case UPLOAD_ERR_FORM_SIZE:
+                http_response_code(400);
+                (new SiteHandler())->upload($request, 'File too big! (Must not be greater than 100MB)');
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                http_response_code(400);
+                (new SiteHandler())->upload($request, 'File upload did not complete');
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                http_response_code(400);
+                (new SiteHandler())->upload($request, 'Zero-length upload');
+                break;
+            default:
+                http_response_code(400);
+                (new SiteHandler())->upload($request, 'Internal error');
+                break;
         }
         $file = new File();
         $file->name = escapeshellcmd($uploadFile->name);
