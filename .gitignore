@@ -1,3 +1,8 @@
-config.php
-/files
-.idea
+vendor/
+.idea/
+node_modules/
+storage/*
+.env
+
+/public/mix-manifest.json
+/public/assets/*

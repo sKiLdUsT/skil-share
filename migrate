@@ -1,0 +1,79 @@
+<?php
+
+require(__DIR__ . '/vendor/autoload.php');
+use DB\Handler;
+use Dotenv\Dotenv;
+
+$dotenv = new Dotenv(__DIR__);
+$dotenv->load();
+$handler = Handler::create();
+$migrations = array_slice(scandir(__DIR__ . '/resources/migrations'), 2);
+
+try
+{
+    $handler->new('migrations', [
+        'name VARCHAR(256) NOT NULL',
+        'date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    ]);
+    $result = $handler->get('migrations');
+} catch (\ErrorException $error) {
+    echo "\033[31mAn error occurred! $error\033[0m\n";
+    exit(1);
+}
+
+
+
+if ($result !== null)
+{
+    if (isset($argv[1]) && $argv[1] === 'rollback')
+    {
+        try
+        {
+            $migrated = $handler->get('migrations');
+            if (count($migrated) > 0) {
+                $mName = end($migrated)['name'];
+                require_once(__DIR__ . '/resources/migrations/' . $mName);
+                $caller = preg_replace('/[0-9]+-(\S+)\.php/', '$1', $mName);
+                $migration = new $caller();
+                $migration->down($handler);
+                if($handler->delete('migrations', ['name', $mName]))
+                {
+                    echo "\033[32mRolled back $mName\033[0m\n";
+                }
+            } else {
+                echo "Nothing to rollback.\n";
+            }
+        } catch (\ErrorException $error) {
+            echo "\033[31mAn error occurred! $error\033[0m\n";
+            exit(1);
+        }
+    } else {
+        foreach ($result as $item)
+        {
+            $migrations = array_diff($migrations, [$item['name']]);
+        }
+        if (count($migrations) > 0)
+        {
+            foreach ($migrations as $mName)
+            {
+                require_once(__DIR__ . '/resources/migrations/' . $mName);
+                $caller = preg_replace('/[0-9]+-(\S+)\.php/', '$1', $mName);
+                $migration = new $caller();
+                $migration->up($handler);
+                try
+                {
+                    if($handler->insert('migrations', [$mName, '']))
+                    {
+                        echo "\033[32mMigrated $mName\033[0m\n";
+                    }
+                } catch (\ErrorException $error) {
+                    echo "\033[31mAn error occurred! $error\033[0m\n";
+                    exit(1);
+                }
+            }
+            echo "Done!\n";
+        } else echo "Nothing to migrate.\n";
+    }
+
+}
+exit(0);

@@ -1,0 +1,24 @@
+{
+    "name": "skildust/skil-share",
+    "description": "ShareX Share Service",
+    "type": "project",
+    "require": {
+        "vlucas/phpdotenv": "^2.4",
+        "james-heinrich/getid3": "^1.9"
+    },
+    "license": "BSD 3-Clause",
+    "authors": [
+        {
+            "name": "sKiLdUsT",
+            "email": "skil@skildust.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"": "app/"}
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "classmap-authoritative": true,
+        "apcu-autoloader": true
+    }
+}
