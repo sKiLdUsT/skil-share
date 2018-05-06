@@ -28,7 +28,5 @@
             <meta property="og:music:album:track" content="<?= $info['tags'][$mime === 'audio/x-flac' ? 'vorbiscomment' : 'id3v2'][$mime === 'audio/x-flac' ? 'tracknumber' : 'track_number'][0] ?>" />
         <?php endif; ?>
         <?php break;case 0: ?>
-        <li><div class="divider"></div></li>
-        <li><i class="material-icons">assignment</i><?= str_replace(__DIR__ . '/../../storage/' . $file->store . ':', '', shell_exec('file ' . __DIR__ . '/../../storage/' . $file->store)) ?></li>
     <?php endswitch; ?>
 <?php endif; ?>
