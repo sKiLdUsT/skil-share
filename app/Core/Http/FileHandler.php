@@ -44,7 +44,7 @@ class FileHandler extends Handler
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
                 http_response_code(400);
-                (new SiteHandler())->upload($request, 'File too big! (Must not be greater than 100MB)');
+                (new SiteHandler())->upload($request, 'File too big! (Must not be greater than 8GB)');
                 break;
             case UPLOAD_ERR_PARTIAL:
                 http_response_code(400);
